@@ -29,7 +29,10 @@ class _HomeState extends State<Home> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: Icon(Icons.more_horiz),
+                  child: IconButton(
+                    icon: Icon(Icons.more_horiz),
+                    onPressed: null,
+                  ),
                 ),
               ],
             ),
