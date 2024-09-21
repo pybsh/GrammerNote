@@ -17,7 +17,7 @@ class _AppState extends State<App> {
   final List<Widget> _pages = [
     const Search(),
     const Home(),
-    const Note(),
+    const Note(isNew: true),
   ];
 
   @override

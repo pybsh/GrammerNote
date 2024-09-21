@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
     return user!.displayName!;
   }
   
-  void goHome() => Navigator.push(context, MaterialPageRoute(builder: (context) => const MyApp()));
+  void goHome() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
   
   @override
   Widget build(BuildContext context) {

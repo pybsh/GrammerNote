@@ -5,7 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class Note extends StatefulWidget {
-  const Note({super.key});
+  final bool isNew;
+  final String? id;
+
+  const Note({
+    required this.isNew,
+    this.id,
+    super.key,
+  });
 
   @override
   State<Note> createState() => _MemoState();
@@ -20,7 +27,6 @@ class _MemoState extends State<Note> {
   final _contentController = TextEditingController();
 
   void saveMemo() {
-    const uuid = Uuid();
     if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
       showDialog(
         context: context,
@@ -41,66 +47,80 @@ class _MemoState extends State<Note> {
       );
       return;
     }
-    db.collection(firebaseAuth.currentUser!.uid).doc(uuid.v4()).set({
+
+    var id = widget.id;
+    id ??= const Uuid().v4();
+    db.collection(firebaseAuth.currentUser!.uid).doc(id).set({
       'title': _titleController.text,
       'content': _contentController.text,
-      'gen_date': Timestamp.fromDate(DateTime.now()),
-    });
+      if(widget.isNew) 'gen_date': Timestamp.fromDate(DateTime.now()),
+      'edit_date': Timestamp.fromDate(DateTime.now()),
+    }, SetOptions(merge: true));
     goHome();
   }
 
-  void goHome() => Navigator.push(
+  void goHome() => Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => const MyApp()));
+
+  @override
+  void initState() {
+    if (!widget.isNew) {
+      db.collection(firebaseAuth.currentUser!.uid).doc(widget.id).get().then(
+        (value) {
+          _titleController.text = value['title'];
+          _contentController.text = value['content'];
+        },
+      );
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 92, right: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const IconButton(
-                icon: Icon(Icons.insert_photo),
-                onPressed: null,
-              ),
-              IconButton(
-                icon: const Icon(Icons.check),
-                onPressed: saveMemo,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 32),
-          child: TextField(
-            controller: _titleController,
-            cursorColor: Colors.black,
-            style: const TextStyle(fontSize: 24),
-            decoration: const InputDecoration(
-              hintText: "제목",
-              hintStyle: TextStyle(fontSize: 24),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 92, right: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    if(!widget.isNew) IconButton(
+                      alignment: Alignment.centerLeft,
+                      icon: const Icon(Icons.keyboard_arrow_left),
+                      onPressed: goHome,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const IconButton(
+                      icon: Icon(Icons.insert_photo),
+                      onPressed: null,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.check),
+                      onPressed: saveMemo,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 32),
-          child: SizedBox(
-            height: 600,
+          Padding(
+            padding: const EdgeInsets.only(left: 32, right: 32),
             child: TextField(
-              controller: _contentController,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
+              controller: _titleController,
               cursorColor: Colors.black,
+              style: const TextStyle(fontSize: 24),
               decoration: const InputDecoration(
-                hintText: "내용",
+                hintText: "제목",
+                hintStyle: TextStyle(fontSize: 24),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
@@ -108,8 +128,27 @@ class _MemoState extends State<Note> {
               ),
             ),
           ),
-        ),
-      ],
-    ));
+          Padding(
+            padding: const EdgeInsets.only(left: 32, right: 32),
+            child: SizedBox(
+              height: 600,
+              child: TextField(
+                controller: _contentController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                cursorColor: Colors.black,
+                decoration: const InputDecoration(
+                  hintText: "내용",
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
