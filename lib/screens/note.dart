@@ -58,6 +58,7 @@ class _MemoState extends State<Note> {
       'content': _contentController.text,
       if (widget.isNew) 'gen_date': Timestamp.fromDate(DateTime.now()),
       'edit_date': Timestamp.fromDate(DateTime.now()),
+      'correction': null,
     }, SetOptions(merge: true));
     snedReq(id);
     goHome();

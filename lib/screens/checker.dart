@@ -53,16 +53,53 @@ class _CheckerState extends State<Checker> {
         .doc(widget.memo_id)
         .get()
         .then((value) {
-      if (value.data()!.keys.contains("correction") && value['correction'] != "Perfect")  {
+      if (value.data()!.keys.contains("correction") &&
+          value['correction'] != null &&
+          value['correction'] != "Perfect") {
         list = value['correction'].values.cast<List<dynamic>>().toList();
+      } else {
+        _showMyDialog();
       }
     });
-    print(list);
     return list;
   }
 
   void goHome() => Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => const MyApp()));
+
+  bool isDialogShowing = false;
+
+  Future<void> _showMyDialog() async {
+    if (isDialogShowing) return; // Prevents showing the dialog multiple times
+    isDialogShowing = true;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('알림'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('문법 검사가 진행중입니다.'),
+                Text('계속해서 이 알림이 등장한다면 노트를 재저장해주세요.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                isDialogShowing = false; // Reset flag after dialog is closed
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {

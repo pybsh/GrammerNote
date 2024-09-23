@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eng_grammar_checker/main.dart';
-import 'package:eng_grammar_checker/screens/register.dart';
+import 'package:eng_grammar_checker/widgets/memo_piechart.dart';
 import 'package:eng_grammar_checker/widgets/memolist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -20,15 +21,16 @@ class _HomeState extends State<Home> {
     await GoogleSignIn().signOut();
     goHome();
   }
-  
+
   String getAccountName() {
     final firebaseAuth = FirebaseAuth.instance;
     User? user = firebaseAuth.currentUser;
     return user!.displayName!;
   }
-  
-  void goHome() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
-  
+
+  void goHome() => Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => const MyApp()));
+
   @override
   Widget build(BuildContext context) {
     String accountName = getAccountName();
@@ -64,15 +66,8 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          Expanded(
-            child: PieChart(
-              PieChartData(
-                  // read about it in the PieChartData section
-                  ),
-              swapAnimationDuration:
-                  const Duration(milliseconds: 150), // Optional
-              swapAnimationCurve: Curves.linear, // Optional
-            ),
+          const Expanded(
+            child: MemoPiechart()
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
