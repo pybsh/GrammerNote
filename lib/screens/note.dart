@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eng_grammar_checker/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 class Note extends StatefulWidget {
@@ -20,7 +24,6 @@ class Note extends StatefulWidget {
 
 class _MemoState extends State<Note> {
   final db = FirebaseFirestore.instance;
-
   final firebaseAuth = FirebaseAuth.instance;
 
   final _titleController = TextEditingController();
@@ -53,10 +56,24 @@ class _MemoState extends State<Note> {
     db.collection(firebaseAuth.currentUser!.uid).doc(id).set({
       'title': _titleController.text,
       'content': _contentController.text,
-      if(widget.isNew) 'gen_date': Timestamp.fromDate(DateTime.now()),
+      if (widget.isNew) 'gen_date': Timestamp.fromDate(DateTime.now()),
       'edit_date': Timestamp.fromDate(DateTime.now()),
     }, SetOptions(merge: true));
+    snedReq(id);
     goHome();
+  }
+
+  Future<http.Response> snedReq(String docId) {
+    return http.post(
+      Uri.parse(dotenv.env['IP']!),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'uid': firebaseAuth.currentUser!.uid,
+        'doc_id': docId,
+      }),
+    );
   }
 
   void goHome() => Navigator.pushReplacement(
@@ -89,11 +106,12 @@ class _MemoState extends State<Note> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    if(!widget.isNew) IconButton(
-                      alignment: Alignment.centerLeft,
-                      icon: const Icon(Icons.keyboard_arrow_left),
-                      onPressed: goHome,
-                    ),
+                    if (!widget.isNew)
+                      IconButton(
+                        alignment: Alignment.centerLeft,
+                        icon: const Icon(Icons.keyboard_arrow_left),
+                        onPressed: goHome,
+                      ),
                   ],
                 ),
                 Row(
