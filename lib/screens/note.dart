@@ -118,10 +118,6 @@ class _MemoState extends State<Note> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const IconButton(
-                      icon: Icon(Icons.insert_photo),
-                      onPressed: null,
-                    ),
                     IconButton(
                       icon: const Icon(Icons.check),
                       onPressed: saveMemo,

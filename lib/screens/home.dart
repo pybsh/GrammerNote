@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eng_grammar_checker/main.dart';
 import 'package:eng_grammar_checker/widgets/memo_piechart.dart';
 import 'package:eng_grammar_checker/widgets/memolist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 

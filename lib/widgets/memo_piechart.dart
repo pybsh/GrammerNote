@@ -33,13 +33,22 @@ class _MemoPiechartState extends State<MemoPiechart> {
         }
       }
     });
-  
+
+    Color getRandomBrightColor() {
+      Random random = Random();
+      double hue = random.nextDouble() * 360;
+      double saturation = 0.5 + random.nextDouble() * 0.5;
+      double lightness = 0.7 + random.nextDouble() * 0.3;
+      return HSLColor.fromAHSL(1.0, hue, saturation, lightness).toColor();
+    }
+
     data.forEach((key, value) {
       list.add(
         PieChartSectionData(
           value: value.toDouble(),
-          title: key,
-          radius: 50,
+          title: "$key | $value",
+          radius: 150,
+          color: getRandomBrightColor(),
         ),
       );
     });
@@ -55,10 +64,12 @@ class _MemoPiechartState extends State<MemoPiechart> {
         } else if (textSnapshot.connectionState == ConnectionState.done) {
           // Check if the list has data to display
           if (list.isEmpty) {
-            return const Center(child: Text('No data available for the chart'));
+            return const Center(child: Text('아직 틀린 문법이 없으시군요!'));
           }
           return PieChart(
             PieChartData(
+              centerSpaceRadius: 0,
+              sectionsSpace: 0,
               sections: list,
             ),
           );
