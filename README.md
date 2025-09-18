@@ -4,6 +4,10 @@
 
 > <b>영어 맞춤법 피드백 앱</b>
 
+<img width="276" alt="d919e1f6-1d9d-4d90-9ec2-d052f8e59e94" src="https://github.com/user-attachments/assets/53ee7153-e252-46d7-bff3-051ef676ae95" />
+<img width="274" alt="6d7c916e-8827-41ec-a552-cc167f180fb2" src="https://github.com/user-attachments/assets/990cd484-a4b0-4f2a-a152-409dce5c05ca" />
+
+
 ## 프로젝트 소개
 
 ### 개요
@@ -32,6 +36,7 @@
 
 ### 구조도
 
+<img width="429" height="321" alt="66549c53-9ce3-4222-9b58-5385da69d915" src="https://github.com/user-attachments/assets/12b356ad-1527-472c-9efb-d40f7e693ebc" />
 
 ## 기타
 - 이 레포지토리는 **프론트엔드 앱** 레포지토리입니다.
